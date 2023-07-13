@@ -1,211 +1,203 @@
-/*import React, { useState } from "react";
-import {nanoid} from "nanoid";
+import React, { useState, useEffect, Fragment } from "react";
+import { nanoid } from "nanoid";
 import "./App.css";
 import data from "./mock-data.json";
+import ReadOnlyRow from "./components/ReadOnlyRow";
+import EditableRow from "./components/EditableRow";
 
 const App = () => {
+
   const [contacts, setContacts] = useState(data);
   const [addFormData, setAddFormData] = useState({
-    id1: '',
-    id2: '',
-    id3: '',
-    id4: '',
-  })
+    c1: "",
+    c2: "",
+    c3: "",
+    c4: "",
+  });
+
+  const [editFormData, setEditFormData] = useState({
+    c1: "",
+    c2: "",
+    c3: "",
+    c4: "",
+  });
+
+  //Sessão JSON
+  const [matrixData, setMatrixData] = useState([]);
+
+  const [jsonStrings, setJsonStrings] = useState([]);
+
+  // Função para criar a string JSON de uma linha da matriz
+  const createJsonString = (rowIndex) => {
+    const rowData = matrixData[rowIndex];
+    const jsonString = JSON.stringify(rowData);
+    return jsonString;
+  };
+
+  const createAllJsonStrings = () => {
+    const newJsonStrings = matrixData.map((_, index) => createJsonString(index));
+    setJsonStrings(newJsonStrings);
+  };
+  //Sessão JSON
+
+  const [editContactId, setEditContactId] = useState(null);
 
   const handleAddFormChange = (event) => {
     event.preventDefault();
 
-    const contato = event.target.getAttribute('name');
-    const tipoContato = event.target.value;
+    const fieldName = event.target.getAttribute("name");
+    const fieldValue = event.target.value;
 
-    const newFormData = {...addFormData};
-    newFormData[contato] = tipoContato;
+    const newFormData = { ...addFormData };
+    newFormData[fieldName] = fieldValue;
 
     setAddFormData(newFormData);
-  }
-
-  const handleAddFormSubmit = (event) =>{
-    event.preventDefault();
-
-    const newContact = {
-      id0: nanoid(),
-      id1: addFormData.id0,
-      id2: addFormData.id1,
-      id3: addFormData.id2,
-      id4:addFormData.id3,
-    };
-    const newContacts = [...contacts, setContacts];
-    setContacts(newContacts);
-  }
-
-  return <div>className = "app-container"
-    <table>
-      <thead>
-        <th>ID</th>
-        <th>Address</th>
-        <th>Phone number</th>
-        <th>Email</th>
-        <th>Final</th>
-      </thead>
-      <tbody>
-        {contacts.map((contacts) => (
-          <tr>
-          <td>{contacts.id0}</td>
-          <td>{contacts.id1}</td>
-          <td>{contacts.id2}</td>
-          <td>{contacts.id3}</td>
-          <td>{contacts.id4}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-    <h2>Add a Contact</h2>
-    <form>
-    <input
-          type="text"
-          name="fullName"
-          required="required"
-          placeholder="Enter a name..."
-          onChange={handleAddFormChange}
-        />
-        <input
-          type="text"
-          name="address"
-          required="required"
-          placeholder="Enter an addres..."
-          onChange={handleAddFormChange}
-        />
-        <input
-          type="text"
-          name="phoneNumber"
-          required="required"
-          placeholder="Enter a phone number..."
-          onChange={handleAddFormChange}
-        />
-        <input
-          type="email"
-          name="email"
-          required="required"
-          placeholder="Enter an email..."
-          onChange={handleAddFormChange}
-        />
-      <button type="submit">Add</button>
-    </form>
-  </div>
-};
-
-export default App;*/
-import React, { useState } from "react";
-import { nanoid } from "nanoid";
-import "./App.css";
-import data from "./mock-data.json";
-
-const App = () => {
-  const [contacts, setContacts] = useState(data);
-
-  const handleEdit = (event, id, field) => {
-    const newValue = event.target.value;
-
-    setContacts((prevContacts) =>
-      prevContacts.map((contact) => {
-        if (contact.id === id) {
-          return { ...contact, [field]: newValue };
-        }
-        return contact;
-      })
-    );
   };
 
-  const handleAdd = (event) => {
+  const handleEditFormChange = (event) => {
+    event.preventDefault();
+
+    const fieldName = event.target.getAttribute("name");
+    const fieldValue = event.target.value;
+
+    const newFormData = { ...editFormData };
+    newFormData[fieldName] = fieldValue;
+
+    setEditFormData(newFormData);
+  };
+
+  const handleAddFormSubmit = (event) => {
     event.preventDefault();
 
     const newContact = {
       id: nanoid(),
-      address: "",
-      phoneNumber: "",
-      email: "",
+      c1: addFormData.c1,
+      c2: addFormData.c2,
+      c3: addFormData.c3,
+      c4: addFormData.c4,
     };
-    setContacts([...contacts, newContact]);
+
+    const newContacts = [...contacts, newContact];
+    setContacts(newContacts);
   };
 
-  const handleDelete = (id) => {
-    setContacts((prevContacts) =>
-      prevContacts.filter((contact) => contact.id !== id)
-    );
+  const handleEditFormSubmit = (event) => {
+    event.preventDefault();
+
+    const editedContact = {
+      id: editContactId,
+      c1: editFormData.c1,
+      c2: editFormData.c2,
+      c3: editFormData.c3,
+      c4: editFormData.c4,
+    };
+
+    const newContacts = [...contacts];
+
+    const index = contacts.findIndex((contact) => contact.id === editContactId);
+
+    newContacts[index] = editedContact;
+
+    setContacts(newContacts);
+    setEditContactId(null);
+  };
+
+  const handleEditClick = (event, contact) => {
+    event.preventDefault();
+    setEditContactId(contact.id);
+
+    const formValues = {
+      c1: contact.c1,
+      c2: contact.c2,
+      c3: contact.c3,
+      c4: contact.c4,
+    };
+
+    setEditFormData(formValues);
+  };
+
+  const handleCancelClick = () => {
+    setEditContactId(null);
+  };
+
+  const handleDeleteClick = (contactId) => {
+    const newContacts = [...contacts];
+
+    const index = contacts.findIndex((contact) => contact.id === contactId);
+
+    newContacts.splice(index, 1);
+
+    setContacts(newContacts);
   };
 
   return (
     <div className="app-container">
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Address</th>
-            <th>Phone number</th>
-            <th>Email</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {contacts.map((contact) => (
-            <tr key={contact.id}>
-              <td>{contact.id}</td>
-              <td>
-                <input
-                  type="text"
-                  value={contact.address}
-                  onChange={(event) =>
-                    handleEdit(event, contact.id, "address")
-                  }
-                />
-              </td>
-              <td>
-                <input
-                  type="text"
-                  value={contact.phoneNumber}
-                  onChange={(event) =>
-                    handleEdit(event, contact.id, "phoneNumber")
-                  }
-                />
-              </td>
-              <td>
-                <input
-                  type="text"
-                  value={contact.email}
-                  onChange={(event) =>
-                    handleEdit(event, contact.id, "email")
-                  }
-                />
-              </td>
-              <td>
-                <button onClick={() => handleDelete(contact.id)}>Delete</button>
-              </td>
+      <form onSubmit={handleEditFormSubmit}>
+        <table>
+          <thead>
+            <tr>
+              <th>1</th>
+              <th>2</th>
+              <th>3</th>
+              <th>4</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {contacts.map((contact) => (
+              <Fragment>
+                {editContactId === contact.id ? (
+                  <EditableRow
+                    editFormData={editFormData}
+                    handleEditFormChange={handleEditFormChange}
+                    handleCancelClick={handleCancelClick}
+                  />
+                ) : (
+                  <ReadOnlyRow
+                    contact={contact}
+                    handleEditClick={handleEditClick}
+                    handleDeleteClick={handleDeleteClick}
+                  />
+                )}
+              </Fragment>
+            ))}
+          </tbody>
+        </table>
+      </form>
+
       <h2>Add a Contact</h2>
-      <form onSubmit={handleAdd}>
+      <form onSubmit={handleAddFormSubmit}>
         <input
           type="text"
-          name="address"
-          required
-          placeholder="Enter an addres..."
+          name="c1"
+          //required="required"
+          placeholder="Enter component"
+          onChange={handleAddFormChange}
         />
         <input
           type="text"
-          name="phoneNumber"
-          required
-          placeholder="Enter a phone number..."
+          name="c2"
+          //required="required"
+          placeholder="Enter component"
+          onChange={handleAddFormChange}
         />
         <input
-          type="email"
-          name="email"
-          required
-          placeholder="Enter an email..."
+          type="text"
+          name="c3"
+          //required="required"
+          placeholder="Enter component"
+          onChange={handleAddFormChange}
+        />
+        <input
+          type="text"
+          name="c4"
+          //required="required"
+          placeholder="Enter component"
+          onChange={handleAddFormChange}
         />
         <button type="submit">Add</button>
       </form>
+      <button onClick={createAllJsonStrings}>Criar JSONs</button>
     </div>
   );
 };
