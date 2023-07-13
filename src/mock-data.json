@@ -1,0 +1,37 @@
+[
+    {
+      "id": 1,
+      "c1": "Closed Contact",
+      "c2": "Open Contact",
+      "c3": "SET coil",
+      "c4": "end"
+    },
+    {
+      "id": 2,
+      "c1": "Jessica warren",
+      "c2": "4 tall town",
+      "c3": "011-211-7516",
+      "c4": "jessica.warren@email.com"
+    },
+    {
+      "id": 3,
+      "c1": "Tony Frank",
+      "c2": "11 lesly road",
+      "c3": "788-962-7516",
+      "c4": "tony.frank@email.com"
+    },
+    {
+      "id": 4,
+      "c1": "Jeremy Clark",
+      "c2": "333 miltown manor",
+      "c3": "011-962-111",
+      "c4": "jeremy.clark@email.com"
+    },
+    {
+      "id": 5,
+      "c1": "Raymond Edwards",
+      "c2": "99 blue acres",
+      "c3": "3231-962-7516",
+      "c4": "raymon.edwards@email.com"
+    }
+  ]
